@@ -1,10 +1,8 @@
-
 var request = require("request");
 var fs = require("fs");
 var twitter = require("twitter");
 var keys = require("./keys.js");
 var spotify = require("spotify");
-var myKeys = new keys.twitterKeys;
 
 var type = process.argv[2];
 var empty = "";
@@ -24,16 +22,22 @@ for (i=3; i<process.argv.length; i++) {
 	else { empty = process.argv[3];
 		emptyArray = process.argv[3];}
 }
-console.log("empty string check: " + empty);
+// console.log("empty string check: " + empty);
 
 //if statements to determine which function to run
-if (type === "movie-this")
-	{movies();}
-else if (type === "my-tweets")
-	{twitter();} 
-else if (type === "spotify-this-song") 
-	{songs();}
-else {return;}
+switch (type) {
+	case "move-this":
+		movies();
+		break;
+	case "my-tweets":
+		twitter(); 
+		break;
+	case "spotify-this-song": 
+		songs();
+		break;
+	default:
+		console.log("none of the functions ran, you failed");
+		
 
 
 
@@ -53,13 +57,17 @@ function movies() {
 
 //function to run twitter npm
 function twitter() {	
+	var client = new Twitter(keys.twitterKeys);
 	var params = {screen_name: 'Ian_aromin'};
 //grabbing the exports api info from other .js and running a get	
-	myKeys.get('statuses/user_timeline', params, function(error, tweets, response) {
-  	if (!error) {
-    	console.log(tweets);
-  }
-  	else {console.log(tweets.text);}
+	client.get('statuses/user_timeline', params, function(error, tweets, response) {
+    if (!error) {
+      for (var i = 0; i < tweets.length; i++) {
+        console.log(tweets[i].created_at);
+        console.log("");
+        console.log(tweets[i].text);
+      }
+    }
 });
 }
 
